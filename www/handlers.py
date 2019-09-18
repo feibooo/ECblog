@@ -1,11 +1,7 @@
-from model import User
-from coroweb import get
-import asyncio
-
 import re, time, json, logging, hashlib, base64, asyncio
 
 ## markdown 是处理日志文本的一种格式语法，具体语法使用请百度
-import markdown2
+import markdown
 from aiohttp import web
 from coroweb import get, post
 
@@ -14,7 +10,7 @@ from apis import Page, APIValueError, APIResourceNotFoundError
 from model import User, Comment, Blog, next_id
 from config import configs
 
-from www.apis import APIError, APIPermissionError
+from www.apis import APIPermissionError
 
 COOKIE_NAME = 'awesession'
 _COOKIE_KEY = configs.session.secret
@@ -350,16 +346,3 @@ async def api_delete_users(id, request):
             await c.update()
     id = id_buff
     return dict(id=id)
-
-
-@get('/api/users')
-async def api_get_users(*, page='1'):
-    page_index = get_page_index(page)
-    num = await User.findNumber('count(id)')
-    p = Page(num, page_index)
-    if num == 0:
-        return dict(page=p, users=())
-    users = await User.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
-    for u in users:
-        u.passwd = '******'
-    return dict(page=p, users=users)

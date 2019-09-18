@@ -4,7 +4,7 @@ from model import User, Blog, Comment
 
 async def test(loop):
     await orm.create_pool(loop=loop, user='root', password='root', db='awesome')
-    u = User(name='Te32st', email='tes23t@qq.com', passwd='12345367890', image='about:blank')
+    u = User(name='admin', email='admin@qq.com', passwd='admin', image='about:blank',admin=1)
     await u.save()
     ## 网友指出添加到数据库后需要关闭连接池，否则会报错 RuntimeError: Event loop is closed
     orm.__pool.close()
